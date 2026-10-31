@@ -1,5 +1,5 @@
 
-name: Build PHASER V1 PRO
+name: PHASER V1 PRO - Windows Build
 
 on:
   workflow_dispatch:
@@ -7,33 +7,30 @@ on:
     branches: [main, master]
 
 jobs:
-  build:
+  windows:
     runs-on: windows-latest
 
     steps:
-      - name: Download source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup CMake
-        uses: lukka/get-cmake@latest
-
-      - name: Clean old build cache
+      - name: Clean previous build
         shell: pwsh
         run: |
           if (Test-Path build) {
             Remove-Item build -Recurse -Force
           }
 
-      - name: Configure PHASER
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-      - name: Compile PHASER
+      - name: Build PHASER
         run: cmake --build build --config Release --parallel
 
-      - name: Upload compiled plugin
+      - name: Upload PHASER VST3
         uses: actions/upload-artifact@v4
         with:
-          name: PHASER-V1-PRO
+          name: PHASER-V1-PRO-Windows
           path: |
             build/**/*.vst3
             build/**/*.exe
