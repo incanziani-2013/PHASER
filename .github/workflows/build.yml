@@ -17,10 +17,17 @@ jobs:
       - name: Setup CMake
         uses: lukka/get-cmake@latest
 
-      - name: Configure PHASER
-        run: cmake -S . -B build -A x64
+      - name: Clean old build cache
+        shell: pwsh
+        run: |
+          if (Test-Path build) {
+            Remove-Item build -Recurse -Force
+          }
 
-      - name: Compile VST3 and Standalone
+      - name: Configure PHASER
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+
+      - name: Compile PHASER
         run: cmake --build build --config Release --parallel
 
       - name: Upload compiled plugin
